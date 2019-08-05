@@ -3,7 +3,7 @@ import re
 
 #pd.set_option('display.expand_frame_repr', False)
 
-df = pd.read_excel(open(r'C:\Users\jchaves6\Documents\Updated_File.xlsx', 'rb'))
+df = pd.read_excel(open('./Updated_June_File.xlsx', 'rb'))
 df.info()
 df = df.sort_values('PG', ascending=False)
 
@@ -66,5 +66,5 @@ df['Span'] = counts
 
 print(df.head(15))
 
-file_name = 'clean_updated_data_W.csv'
+file_name = 'clean_updated_data_June.csv'
 df.to_csv(file_name, sep=',', encoding='utf-8')

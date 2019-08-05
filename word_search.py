@@ -30,7 +30,7 @@ print(selected['Level'].value_counts())
 #print(selected[['WWID', 'Job']])
 '''
 
-docs = pd.read_csv("./clean_updated_data_W.csv", delimiter=',')
+docs = pd.read_csv("./clean_updated_data_June.csv", delimiter=',')
 all_docs = docs
 all_docs['Job'] = docs['Grouped']
 selected = all_docs[(all_docs['Job'].str.contains('DATA SCIEN')) |
@@ -131,7 +131,7 @@ docs['INTELLI'] = flag8
 docs['PROGRAMMER'] = flag9
 
 docs['FLAG'] = flag
-file_name = 'clean_updated_data_W2.csv'
+file_name = 'clean_updated_data_June2.csv'
 docs.to_csv(file_name, sep=',', encoding='utf-8')
 #docs.to_excel('clean_updated_data2.xlsx', sheet_name='Sheet1')
 
