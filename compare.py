@@ -1,5 +1,7 @@
 import pandas as pd
 import fasttext
+import seaborn as sns
+import nltk
 from nltk.corpus import stopwords
 import numpy as np
 from nltk.tokenize import RegexpTokenizer
@@ -53,18 +55,36 @@ sims8 = []
 sims9 = []
 
 avs = []
+words_ns = []
 tokenizer = RegexpTokenizer(r'\w+')
+ignore_words = set(stopwords.words('english'))
+ignore_words.add('e')
+ignore_words.add('g')
+ignore_words.add('required')
+ignore_words.add('preferred')
+ignore_words.add('understanding')
+
 for a in [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9]:
-    print(a)
+    # print(a)
     tok = tokenizer.tokenize(a[0].lower())
-    a2 = ' '.join([word for word in tok if word not in set(stopwords.words('english'))])
+    a1 = [word for word in tok if word not in ignore_words]
+    for w in a1:
+        words_ns.append(w)
+    a2 = ' '.join(a1)
     print(a2)
     a_v = model.get_sentence_vector(a2).reshape(1, -1)
     avs.append(a_v)
 
+sns.set(rc={'figure.figsize': (11.7, 8.27)})
+sns.set_style('darkgrid')
+nlp_words = nltk.FreqDist(words_ns)
+nlp_words.plot(20)
+
+
 #sys.exit()
 
 ie = 0
+fq = []
 for iq, eq in zip(df['Internal Qualifications'], df['External Qualifications']):
     if ie > 100:
         break
@@ -82,6 +102,7 @@ for iq, eq in zip(df['Internal Qualifications'], df['External Qualifications']):
             sims7.append(0)
             sims8.append(0)
             sims9.append(0)
+            fq.append('')
             continue
         else:
             tok = tokenizer.tokenize(eq.lower())
@@ -91,6 +112,8 @@ for iq, eq in zip(df['Internal Qualifications'], df['External Qualifications']):
         tok = tokenizer.tokenize(iq.lower())
         a2 = ' '.join([word for word in tok if word not in set(stopwords.words('english'))])
         q = model.get_sentence_vector(a2).reshape(1, -1)
+
+    fq.append(a2)
 
     cos = cosine_similarity(avs[0], q)
     sims0.append(cos[0][0])
@@ -117,6 +140,7 @@ for iq, eq in zip(df['Internal Qualifications'], df['External Qualifications']):
 
 print(sims1[:5])
 
+df['Fixed Qualifications'] = fq
 df['Sims0'] = sims0
 df['Sims1'] = sims1
 df['Sims2'] = sims2
@@ -127,6 +151,9 @@ df['Sims6'] = sims6
 df['Sims7'] = sims7
 df['Sims8'] = sims8
 df['Sims9'] = sims9
+ssim = np.sum([sims0,sims1,sims2,sims3,sims4,sims5,sims6,sims7,sims8,sims9], axis=0)
+print(ssim)
+df['Avg. Sim.'] = np.divide(ssim, 10)
 
-df.to_csv('test.csv', sep=',')
+df.to_csv('DataScientists.csv', sep=',')
 #print(cos)
